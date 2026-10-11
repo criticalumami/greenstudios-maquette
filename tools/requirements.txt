@@ -1,0 +1,6 @@
+numpy
+trimesh
+shapely
+scikit-image
+networkx
+rtree

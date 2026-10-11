@@ -1,0 +1,1123 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<style>html,body{margin:0}[hidden]{display:none!important}img{max-width:100%}</style>
+<title>Greenstudios Maquette</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Semi+Condensed:wght@500;600;700&family=Barlow:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: drafting-table tool — large 3D viewport on the left, a ruled control sheet on the right; stacks on phones */
+:root{
+  --paper:#eceee9; --sheet:#f7f8f5; --ink:#1d2421; --muted:#5e6862; --rule:#cfd4cc;
+  --sage:#5f7f62; --sage-soft:#dfe8dc; --blue:#2f5f9e; --warn:#a8741a; --bad:#b0412e; --ok:#3f7a48;
+  --canvas:#e3e6e0; --clay:#b4673f; --clay-soft:#ead6c9; --nozzle:#d4271b; --travel:#8a6d9e;
+  --f-display:"Barlow Semi Condensed","Arial Narrow",Arial,sans-serif;
+  --f-body:"Barlow","Helvetica Neue",Arial,sans-serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --paper:#151a18; --sheet:#1c2220; --ink:#e4e9e4; --muted:#9aa59e; --rule:#2e3733;
+  --sage:#8fb592; --sage-soft:#24322a; --blue:#86aee6; --warn:#e0a94a; --bad:#ec8a76; --ok:#86c58f;
+  --canvas:#202725; --clay:#d98c5f; --clay-soft:#3a2a20; --nozzle:#ff5a45; --travel:#b79ccc; color-scheme:dark }}
+:root[data-theme="dark"]{
+  --paper:#151a18; --sheet:#1c2220; --ink:#e4e9e4; --muted:#9aa59e; --rule:#2e3733;
+  --sage:#8fb592; --sage-soft:#24322a; --blue:#86aee6; --warn:#e0a94a; --bad:#ec8a76; --ok:#86c58f;
+  --canvas:#202725; --clay:#d98c5f; --clay-soft:#3a2a20; --nozzle:#ff5a45; --travel:#b79ccc; color-scheme:dark }
+html,body{height:100%}
+body{background:var(--paper);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.45;padding-inline:16px;padding-block:16px;box-sizing:border-box}
+*{box-sizing:border-box}
+header.top{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:8px 24px;max-width:1500px;margin:0 auto 12px}
+h1{font-family:var(--f-display);font-weight:700;font-size:clamp(26px,3.4vw,38px);letter-spacing:.01em;margin:0;text-wrap:balance;line-height:1}
+h1 span{color:var(--sage)}
+.meta{font-family:var(--f-mono);font-size:12px;color:var(--muted);letter-spacing:.02em}
+.wrap{display:grid;grid-template-columns:minmax(0,1fr) 380px;gap:16px;max-width:1500px;margin:0 auto}
+@media (max-width:960px){.wrap{grid-template-columns:minmax(0,1fr)}}
+.stage{position:relative;background:var(--canvas);border:1px solid var(--rule);border-radius:6px;min-height:420px;height:calc(100vh - 120px);max-height:900px;overflow:hidden}
+@media (max-width:960px){.stage{height:62vh;min-height:360px}}
+#view{position:absolute;inset:0;width:100%;height:100%;display:block;touch-action:none}
+.views{position:absolute;left:10px;top:10px;display:flex;flex-wrap:wrap;gap:4px}
+.views button,.seg button{font-family:var(--f-mono);font-size:12px;border:1px solid var(--rule);background:var(--sheet);color:var(--ink);padding:5px 9px;border-radius:4px;cursor:pointer}
+.views button:hover,.seg button:hover{border-color:var(--sage)}
+.seg button[aria-pressed="true"]{background:var(--ink);color:var(--sheet);border-color:var(--ink)}
+button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--blue);outline-offset:2px}
+.scalebar{position:absolute;left:10px;bottom:10px;font-family:var(--f-mono);font-size:12px;color:var(--muted);background:color-mix(in srgb,var(--sheet) 85%,transparent);padding:6px 9px;border-radius:4px;border:1px solid var(--rule)}
+.legend{position:absolute;right:10px;bottom:10px;display:flex;flex-direction:column;gap:3px;font-family:var(--f-mono);font-size:11.5px;background:color-mix(in srgb,var(--sheet) 88%,transparent);padding:8px 10px;border-radius:4px;border:1px solid var(--rule);max-width:60%}
+.legend div{display:flex;gap:7px;align-items:center}
+.sw{width:11px;height:11px;border-radius:2px;flex:none;border:1px solid rgba(0,0,0,.25)}
+aside{background:var(--sheet);border:1px solid var(--rule);border-radius:6px;padding:4px 18px 18px;display:flex;flex-direction:column;min-width:0;overflow:auto;max-height:calc(100vh - 120px)}
+@media (max-width:960px){aside{max-height:none}}
+section.block{border-bottom:1px solid var(--rule);padding-block:14px;display:flex;flex-direction:column;gap:10px}
+section.block:last-child{border-bottom:0}
+h2{font-family:var(--f-display);font-weight:600;font-size:13px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin:0}
+.row{display:flex;justify-content:space-between;align-items:baseline;gap:12px}
+.row label{font-weight:500}
+.val{font-family:var(--f-mono);font-size:13px;font-variant-numeric:tabular-nums;color:var(--blue);white-space:nowrap}
+input[type=range]{width:100%;accent-color:var(--sage);margin:0}
+.seg{display:flex;flex-wrap:wrap;gap:4px}
+.note{font-size:13px;color:var(--muted);margin:0}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th{font-family:var(--f-display);font-weight:600;text-transform:uppercase;letter-spacing:.08em;font-size:11px;color:var(--muted);text-align:left;padding:4px 4px 6px;border-bottom:1px solid var(--rule)}
+td{padding:5px 4px;border-bottom:1px dashed var(--rule);vertical-align:middle}
+td.n{font-family:var(--f-mono);font-variant-numeric:tabular-nums;text-align:right;white-space:nowrap}
+th.n{text-align:right}
+.chip{font-family:var(--f-mono);font-size:11px;padding:1px 6px;border-radius:9px;border:1px solid currentColor;white-space:nowrap}
+.chip.ok{color:var(--ok)}.chip.warn{color:var(--warn)}.chip.bad{color:var(--bad)}
+.tbl{overflow-x:auto}
+.swaps{font-family:var(--f-mono);font-size:12.5px;display:flex;flex-direction:column;gap:4px}
+.swaps div{display:flex;gap:8px;align-items:center}
+#feat td.cur,#feat th.cur{background:var(--sage-soft)}
+#feat td.n.ok{color:var(--ok)}#feat td.n.warn{color:var(--warn)}#feat td.n.bad{color:var(--bad);font-weight:500}
+#feat td small{color:var(--muted);font-size:11.5px;display:block}
+.views .sep{width:8px}
+.views button[aria-pressed="true"]{background:var(--ink);color:var(--sheet);border-color:var(--ink)}
+#dims{position:absolute;inset:0;pointer-events:none}
+.dim{position:absolute;transform:translate(-50%,-50%);font-family:var(--f-mono);font-size:12.5px;font-weight:500;color:#fff;background:var(--blue);padding:2px 7px;border-radius:3px;white-space:nowrap;font-variant-numeric:tabular-nums}
+.dim.base{background:#7a5a36}
+.big{font-family:var(--f-display);font-weight:600;font-size:20px;line-height:1.15}
+.sub{font-family:var(--f-mono);font-size:12px;color:var(--muted)}
+
+/* clay toolpaths tab */
+button.reset{font-family:var(--f-mono);font-size:12px;border:1px solid var(--nozzle);background:var(--sheet);color:var(--nozzle);padding:5px 9px;border-radius:4px;cursor:pointer;font-weight:500}
+button.reset:hover{background:var(--nozzle);color:#fff}
+#tabClay .stage.night{background:#161b1a}
+#tpView{position:absolute;inset:0;width:100%;height:100%;display:block;touch-action:none}
+
+.wrap[hidden]{display:none!important}
+.btn{font-family:var(--f-mono);font-size:12px;border:1px solid var(--rule);background:var(--sheet);color:var(--ink);padding:5px 9px;border-radius:4px;cursor:pointer}
+.btn:hover{border-color:var(--clay)}
+#tabClay input[type=range]{accent-color:var(--nozzle)}
+
+
+.tabs{display:flex;gap:2px;border:1px solid var(--rule);border-radius:6px;padding:3px;background:var(--sheet)}
+.tabs button{font-family:var(--f-display);font-weight:600;font-size:15px;letter-spacing:.02em;border:0;background:transparent;color:var(--muted);padding:6px 14px;border-radius:4px;cursor:pointer}
+.tabs button[aria-selected="true"]{background:var(--ink);color:var(--sheet)}
+.tabs button:hover{color:var(--ink)}
+.tabs button[aria-selected="true"]:hover{color:var(--sheet)}
+header.top .lead{display:flex;flex-wrap:wrap;align-items:center;gap:10px 20px}
+
+.over{position:absolute;left:10px;top:10px;right:10px;display:flex;flex-wrap:wrap;gap:6px;pointer-events:none}
+.over>*{pointer-events:auto}
+.compare{display:flex;border:1px solid var(--ink);border-radius:5px;overflow:hidden;background:var(--sheet)}
+.compare button{font-family:var(--f-display);font-weight:600;font-size:14px;letter-spacing:.03em;border:0;background:transparent;color:var(--ink);padding:7px 12px;cursor:pointer}
+.compare button[aria-pressed="true"]{background:var(--clay);color:#fff}
+.hud{position:absolute;left:10px;bottom:10px;font-family:var(--f-mono);font-size:12px;background:color-mix(in srgb,var(--sheet) 88%,transparent);border:1px solid var(--rule);border-radius:4px;padding:6px 9px;display:flex;gap:14px;flex-wrap:wrap;max-width:calc(100% - 20px);font-variant-numeric:tabular-nums}
+.hud b{color:var(--nozzle);font-weight:500}
+.play{display:flex;gap:6px;align-items:center}
+.play .btn{min-width:70px}
+#plan{width:100%;aspect-ratio:1.45;max-width:100%;background:var(--canvas);border:1px solid var(--rule);border-radius:4px;display:block}
+.stats{display:grid;grid-template-columns:1fr auto;gap:3px 12px;font-size:13px}
+.stats span:nth-child(even){font-family:var(--f-mono);text-align:right;font-variant-numeric:tabular-nums}
+ul.changes{margin:0;padding-left:18px;font-size:13.5px;display:flex;flex-direction:column;gap:5px}
+.key{display:flex;flex-wrap:wrap;gap:6px 14px;font-family:var(--f-mono);font-size:11.5px;color:var(--muted)}
+.key i{display:inline-block;width:14px;height:3px;vertical-align:middle;margin-right:5px;border-radius:2px}
+@media (prefers-reduced-motion: reduce){*{scroll-behavior:auto}}
+
+</style>
+</head>
+<body>
+
+
+<header class="top">
+  <div class="lead">
+    <h1>Greenstudios <span>Maquette</span></h1>
+    <div class="tabs" role="tablist" aria-label="View">
+      <button role="tab" id="tabBtnModel" aria-controls="tabModel" aria-selected="true">Model</button>
+      <button role="tab" id="tabBtnClay" aria-controls="tabClay" aria-selected="false">Clay toolpaths</button>
+    </div>
+  </div>
+  <div class="meta" id="metaLine">Plot 2869 · Pafos · adp architecture planning set · envelope phase 1</div>
+</header>
+
+<div class="wrap" id="tabModel" role="tabpanel" aria-labelledby="tabBtnModel">
+  <div class="stage">
+    <canvas id="view" aria-label="3D model of the Greenstudios building envelope"></canvas>
+    <div class="views" role="group" aria-label="Camera views">
+      <button data-v="se">SE</button><button data-v="ne">NE</button><button data-v="nw">NW</button><button data-v="sw">SW</button><button data-v="top">Plan</button><button data-v="s">South</button>
+      <button id="resetM" class="reset" title="Bring the model back to the starting view (or double-click the model)">Reset view</button>
+      <span class="sep"></span>
+      <button id="dimBtn" aria-pressed="false">Dimensions (cm)</button>
+      <button id="baseBtn" aria-pressed="true">Plot base</button>
+      <button id="intBtn" aria-pressed="true">Interiors</button>
+      <button id="coreBtn" aria-pressed="false">Lift &amp; stair</button>
+      <button id="ringBtn" aria-pressed="true">Lintel rings</button>
+    </div>
+    <div id="dims"></div>
+    <div class="scalebar" id="scalebar"></div>
+    <div class="legend" id="legend"></div>
+  </div>
+
+  <aside>
+    <section class="block">
+      <h2>Green wall</h2>
+      <div class="row"><label for="gw">Pull screen off the facade</label><span class="val" id="gwv"></span></div>
+      <input type="range" id="gw" min="0" max="6" step="0.05" value="0">
+      <p class="note">Starts at the built position, 1.8 m in front of the facade, and only moves outward. The balcony glass travels with the screen.</p>
+    </section>
+
+    <section class="block" id="dimPanel">
+      <h2>Model size in real life</h2>
+      <div class="big" id="dimBig"></div>
+      <div class="sub" id="dimSub"></div>
+    </section>
+
+    <section class="block">
+      <h2>Wall thickness on the model</h2>
+      <p class="note">Real thickness from the drawings, and what it becomes in millimetres at each scale. The column for your chosen scale is highlighted; colours follow the chosen printer.</p>
+      <div class="tbl"><table id="feat"><thead></thead><tbody></tbody></table></div>
+      <div class="sub" id="featKey"></div>
+    </section>
+    <section class="block">
+      <h2>Floors</h2>
+      <div class="seg" id="floorSeg" role="group" aria-label="Show up to floor">
+        <button data-f="0">Ground</button><button data-f="1">Floor 1</button><button data-f="2">Floor 2</button><button data-f="3">Floor 3</button><button data-f="4">Floor 4</button><button data-f="5" aria-pressed="true">All</button>
+      </div>
+      <p class="note" id="floorNote"></p>
+      <div class="row"><label for="ex">Lift floors apart</label><span class="val" id="exv"></span></div>
+      <input type="range" id="ex" min="0" max="5" step="0.05" value="0">
+    </section>
+
+    <section class="block">
+      <h2>Section &amp; shell</h2>
+      <div class="seg" role="group" aria-label="Outer walls">
+        <button id="shellBtn" aria-pressed="false">See-through outer walls</button>
+      </div>
+      <p class="note">Makes the exterior walls, parapets and cladding clear so the rooms show through. The green wall turns a lighter, still-visible green.</p>
+      <div class="seg" id="secSeg" role="group" aria-label="Cut direction">
+        <button data-a="s" aria-pressed="true">Cut from south</button><button data-a="e">Cut from east</button><button data-a="n">From north</button><button data-a="w">From west</button>
+      </div>
+      <div class="row"><label for="sec">Section cut</label><span class="val" id="secv"></span></div>
+      <input type="range" id="sec" min="0" max="100" step="0.5" value="0">
+    </section>
+
+    <section class="block">
+      <h2>Model scale &amp; printer</h2>
+      <div class="seg" id="scaleSeg" role="group" aria-label="Scale">
+        <button data-s="100" aria-pressed="true">1:100</button><button data-s="80">1:80</button><button data-s="150">1:150</button><button data-s="200">1:200</button>
+      </div>
+      <div class="seg" id="printerSeg" role="group" aria-label="Printer">
+        <button data-p="fdm" aria-pressed="true">FDM 0.4 mm</button><button data-p="resin">Resin</button><button data-p="clay">Clay 1.2 mm nozzle</button>
+      </div>
+      <div class="row"><label for="lh">Layer height</label><span class="val" id="lhv"></span></div>
+      <input type="range" id="lh" min="0.05" max="0.3" step="0.01" value="0.2">
+    </section>
+
+    <section class="block">
+      <h2>Colour</h2>
+      <div class="seg" id="modeSeg" role="group" aria-label="Colour mode">
+        <button data-m="arch" aria-pressed="true">Materials</button>
+        <button data-m="parts">Print parts</button>
+        <button data-m="bands">Filament swaps</button>
+        <button data-m="clay">Ceramic, unglazed</button>
+      </div>
+      <p class="note" id="modeNote"></p>
+      <div class="swaps" id="swaps" hidden></div>
+    </section>
+
+    <section class="block" id="clayPanel" hidden>
+      <h2>Clay print</h2>
+      <div class="seg" id="claySeg" role="group" aria-label="Clay body">
+        <button data-c="terracotta" aria-pressed="true">Terracotta</button><button data-c="buff">Buff stoneware</button><button data-c="porcelain">Porcelain</button><button data-c="black">Black clay</button>
+      </div>
+      <div class="row"><label for="cl">Clay layer height</label><span class="val" id="clv"></span></div>
+      <input type="range" id="cl" min="0.4" max="2" step="0.05" value="1">
+      <div class="row"><label for="sh">Firing shrinkage</label><span class="val" id="shv"></span></div>
+      <input type="range" id="sh" min="0" max="15" step="0.5" value="11">
+      <p class="note" id="shNote"></p>
+    </section>
+
+    <section class="block">
+      <h2>Print preview &amp; section cut</h2>
+      <div class="row"><label for="pp">Printed so far</label><span class="val" id="ppv"></span></div>
+      <input type="range" id="pp" min="0" max="100" step="0.5" value="100">
+      <p class="note" id="ppNote"></p>
+    </section>
+
+
+    <section class="block">
+      <h2>Parts to print</h2>
+      <div class="tbl"><table id="parts"><thead><tr><th>Part</th><th class="n">W × D × H mm</th><th class="n">Layers</th></tr></thead><tbody></tbody></table></div>
+      <p class="note">Print the green wall lying flat on its back: it is one thin plate with punched openings. The strip above the windows is now its own lintel ring per floor, printed flat and glued on top of the walls, so the walls print as open combs with nothing bridging the windows.</p>
+    </section>
+  </aside>
+</div>
+
+
+<div class="wrap" id="tabClay" role="tabpanel" aria-labelledby="tabBtnClay" hidden>
+  <div class="stage">
+    <canvas id="tpView" aria-label="3D view of the clay toolpath"></canvas>
+    <div class="over">
+      <div class="compare" role="group" aria-label="Final result">
+        <button id="cmpClay" aria-pressed="true">Clay · all 2.5 mm</button>
+        <button id="cmpNow" aria-pressed="false">Model right now</button>
+        <button id="cmpBoth" aria-pressed="false">Path only</button>
+      </div>
+      <div class="seg" role="group" aria-label="Show">
+        <button id="showPath" aria-pressed="true">Toolpath lines</button>
+        <button id="showTravel" aria-pressed="true">Nozzle lifts</button>
+      </div>
+      <div class="seg" role="group" aria-label="Camera">
+        <button data-cam="iso">3D</button><button data-cam="top">Plan</button><button data-cam="s">South</button>
+        <button id="resetC" class="reset" title="Bring the part back to the starting view (or double-click it)">Reset view</button>
+      </div>
+    </div>
+    <div class="hud" id="hud"></div>
+  </div>
+
+  <aside>
+    <section class="block">
+      <h2>Part on the bed</h2>
+      <div class="seg" id="partSeg" role="group" aria-label="Part"></div>
+      <p class="note" id="partNote"></p>
+    </section>
+
+    <section class="block">
+      <h2>Nozzle</h2>
+      <div class="row"><label for="prog">Printed so far</label><span class="val" id="progv"></span></div>
+      <input type="range" id="prog" min="0" max="1000" step="1" value="1000">
+      <div class="row"><label for="lay">Jump to layer</label><span class="val" id="layv"></span></div>
+      <input type="range" id="lay" min="1" max="30" step="1" value="30">
+      <div class="play">
+        <button class="btn" id="playBtn">Play</button>
+        <button class="btn" id="stepBack" aria-label="Previous stroke">◀ stroke</button>
+        <button class="btn" id="stepFwd" aria-label="Next stroke">stroke ▶</button>
+        <label for="spd" class="note" style="margin-left:auto">speed</label>
+        <input type="range" id="spd" min="1" max="60" value="12" style="width:90px">
+      </div>
+    </section>
+
+    <section class="block">
+      <h2>This layer, from above</h2>
+      <canvas id="plan" width="740" height="510" aria-label="Plan of the current layer with print order"></canvas>
+      <div class="key">
+        <span><i style="background:var(--clay)"></i>printed</span>
+        <span><i style="background:var(--clay-soft);outline:1px solid var(--clay)"></i>to print</span>
+        <span><i style="background:var(--travel)"></i>nozzle lift</span>
+        <span><i style="background:var(--nozzle);height:8px;width:8px;border-radius:50%"></i>nozzle</span>
+        <span>numbers = stroke order</span>
+      </div>
+    </section>
+
+    <section class="block">
+      <h2>Numbers for this part</h2>
+      <div class="stats" id="stats"></div>
+      <div class="row"><label for="fs">Print speed</label><span class="val" id="fsv"></span></div>
+      <input type="range" id="fs" min="5" max="40" step="1" value="15">
+    </section>
+
+    <section class="block">
+      <h2>What changed for clay</h2>
+      <ul class="changes">
+        <li>Interior partitions go from 0.9 mm to 2.5 mm, the same single bead as the outside walls.</li>
+        <li>No overhangs. Anything that sits over a gap is removed: lintels over doors and windows go, so every opening runs up to the slab of the floor above, which closes it.</li>
+        <li>The stair and lift block prints as a hollow 2.5 mm shell, not a solid block.</li>
+        <li>Each floor prints its own slab first (5 layers, lines turned 90° each layer), then the walls straight on top.</li>
+        <li>Every wall is printed once. A stroke that ends against a wall already printed stops half a bead short, so the beads touch without piling up.</li>
+        <li>Widening the partitions makes each wall end about 0.8 mm longer, so doors close up by about 1.6 mm on the model.</li>
+        <li>Paths are drawn at final 1:100 size. Scale the G-code up by your measured shrinkage (about 112% for 11%).</li>
+      </ul>
+    </section>
+  </aside>
+</div>
+
+
+<script src="lib/three.min.js"></script>
+<script src="lib/OrbitControls.js"></script>
+<script src="model-data.js"></script>
+<script src="toolpaths.js"></script>
+<script>
+
+const canvas = document.getElementById('view');
+const renderer = new THREE.WebGLRenderer({canvas, antialias:true, alpha:true});
+renderer.setPixelRatio(Math.min(devicePixelRatio,2));
+renderer.localClippingEnabled = true;
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(32, 1, 0.5, 500);
+const controls = new THREE.OrbitControls(camera, canvas);
+controls.enableDamping = true; controls.target.set(0,8.5,0);
+scene.add(new THREE.HemisphereLight(0xffffff, 0x8a8f88, 0.8));
+const sun = new THREE.DirectionalLight(0xffffff, 0.8); sun.position.set(18,30,22); scene.add(sun);
+const fill = new THREE.DirectionalLight(0xffffff, 0.25); fill.position.set(-20,10,-15); scene.add(fill);
+
+const clip = new THREE.Plane(new THREE.Vector3(0,-1,0), 1000);
+const clipTop = new THREE.Plane(new THREE.Vector3(0,-1,0), 1000);   // trims the green wall and louvres to the chosen floor
+const FLOOR_TOP = [2.75, 6.05, 9.35, 12.65, 16.1, 1000];
+const secPlane = new THREE.Plane(new THREE.Vector3(0,0,-1), 1000);   // vertical section cut
+
+const PART_OF = c => ({ '00_Ground':'Ground floor','01_Floor1':'Floor 1','02_Floor2':'Floor 2','03_Floor3':'Floor 3',
+  '04_Floor4_Penthouse':'Floor 4 penthouse','05_Roof':'Roof','06_Louvres':'AC louvres','07_Greenwall':'Green wall','08_Balconies':'Balconies','10_Lintel_rings':'Lintel rings'}[c]);
+const LEVEL = {'00_Ground':0,'01_Floor1':1,'02_Floor2':2,'03_Floor3':3,'04_Floor4_Penthouse':4,'05_Roof':5};
+const ARCH = {Concrete_White:0xe9e9e4, Slab:0xb9bcb4, Greenwall:0x7f9d7f, Wood_Cladding:0xcbb791, Glass:0x9fd0dc, Interior_Walls:0xd6d2c6, Stair_Block:0x8f938c};
+const PARTCOL = {'Ground floor':0x6c7a89,'Floor 1':0xd9a441,'Floor 2':0x4f8f7a,'Floor 3':0xc8664f,'Floor 4 penthouse':0x5a6fb8,'Roof':0x8a5a8c,'Green wall':0x66a85a,'Balconies':0xe2d7c3,'AC louvres':0x3d3d3d,'Lintel rings':0xd6457f};
+const BANDS = [0, 2.75, 6.05, 9.35, 12.65, 16.1];
+const BANDCOL = [0x6c7a89,0xd9a441,0x4f8f7a,0xc8664f,0x5a6fb8,0x8a5a8c];
+// unglazed fired colours
+const CLAY = {terracotta:{c:0xb4643f, n:'Terracotta'}, buff:{c:0xd8c3a0, n:'Buff stoneware'}, porcelain:{c:0xeeebe4, n:'Porcelain'}, black:{c:0x3e3936, n:'Black clay'}};
+
+// uniforms shared by every building material
+const U = { uCore:{value:0}, uMode:{value:0}, uBands:{value:BANDCOL.map(c=>new THREE.Color(c))}, uClay:{value:new THREE.Color(CLAY.terracotta.c)}, uLayer:{value:0.1} };
+const hex = c => '#'+c.toString(16).padStart(6,'0');
+
+const meshes = [];
+for (const [name, d] of Object.entries(GEO)) {
+  const g = new THREE.BufferGeometry();
+  const pos = new Float32Array(d.f.length*3), zr = new Float32Array(d.f.length);
+  d.f.forEach((vi,k)=>{ const x=d.v[vi*3], y=d.v[vi*3+1], z=d.v[vi*3+2];
+    pos[k*3]=x; pos[k*3+1]=z; pos[k*3+2]=-y; zr[k]=z; });
+  g.setAttribute('position', new THREE.BufferAttribute(pos,3));
+  g.setAttribute('zr', new THREE.BufferAttribute(zr,1));
+  g.computeVertexNormals(); g.computeBoundingBox();
+  const glass = d.m === 'Glass';
+  const mat = new THREE.MeshStandardMaterial({color:ARCH[d.m]||0xdddddd, roughness: glass?0.1:0.85, metalness:0,
+     transparent:glass, opacity:glass?0.45:1, clippingPlanes:(d.c==='07_Greenwall'||d.c==='06_Louvres')?[clip,clipTop,secPlane]:[clip,secPlane], side:THREE.DoubleSide,
+     polygonOffset:true, polygonOffsetFactor:1, polygonOffsetUnits:1});
+  const isGlass = {value: glass?1:0}, isHL = {value: (d.m==='Interior_Walls'||d.m==='Stair_Block')?1:0};
+  mat.onBeforeCompile = sh => {
+    Object.assign(sh.uniforms, U, {uGlass:isGlass, uHL:isHL});
+    sh.vertexShader = 'attribute float zr; varying float vZr; varying vec3 vP;\n' +
+      sh.vertexShader.replace('#include <begin_vertex>', '#include <begin_vertex>\n vZr = zr; vP = position;');
+    sh.fragmentShader = 'varying float vZr; varying vec3 vP; uniform vec3 uBands[6]; uniform float uMode; uniform float uGlass; uniform vec3 uClay; uniform float uLayer; uniform float uCore; uniform float uHL;\n' +
+      'float h3(vec3 p){ return fract(sin(dot(p, vec3(12.9898,78.233,37.719)))*43758.5453); }\n' +
+      sh.fragmentShader.replace('#include <color_fragment>', `#include <color_fragment>
+       if (uGlass < 0.5) {
+         if (uMode > 0.5 && uMode < 1.5) { vec3 c = uBands[0];
+           if (vZr > 2.76) c = uBands[1]; if (vZr > 6.06) c = uBands[2]; if (vZr > 9.36) c = uBands[3];
+           if (vZr > 12.66) c = uBands[4]; if (vZr > 16.11) c = uBands[5]; diffuseColor.rgb = c; }
+         if (uMode > 1.5) {
+           float t = fract(vZr / uLayer);
+           float ridge = 0.80 + 0.20 * smoothstep(0.0, 0.45, t) * smoothstep(1.0, 0.55, t);
+           float grain = 0.93 + 0.07 * h3(floor(vP * 55.0));
+           float speck = step(0.992, h3(floor(vP * 30.0) + 7.0));
+           diffuseColor.rgb = uClay * ridge * grain * (1.0 - 0.35 * speck);
+         }
+         if (uCore > 0.5 && uHL > 0.5) {
+           bool inStair = vP.x > -3.35 && vP.x < 2.7 && vP.z > -5.4 && vP.z < -1.75;
+           bool inLift  = vP.x > -3.3 && vP.x < -0.45 && vP.z > -0.15 && vP.z < 2.55;
+           if (inStair) diffuseColor.rgb = vec3(0.89, 0.47, 0.18);
+           if (inLift)  diffuseColor.rgb = vec3(0.18, 0.47, 0.84);
+         }
+       }`);
+  };
+  const m = new THREE.Mesh(g, mat);
+  const edges = new THREE.LineSegments(new THREE.EdgesGeometry(g, 25), new THREE.LineBasicMaterial({color:0x2a302c, transparent:true, opacity:glass?0.25:0.55, clippingPlanes:mat.clippingPlanes}));
+  m.add(edges);
+  m.userData = {name, coll:d.c, part:PART_OF(d.c), mat:d.m, glass, edges};
+  scene.add(m); meshes.push(m);
+}
+
+// ---------- site base: the real plot outline, one plain slab ----------
+function woodTex(base, grain, seed){
+  const c = document.createElement('canvas'); c.width = 512; c.height = 512; const x = c.getContext('2d');
+  x.fillStyle = base; x.fillRect(0,0,512,512);
+  let s = seed; const r = () => (s = (s*16807) % 2147483647) / 2147483647;
+  for (let i=0;i<140;i++){ const y = r()*512, a = 0.04 + r()*0.10, w = 0.6 + r()*2.2;
+    x.strokeStyle = grain.replace('A', a.toFixed(3)); x.lineWidth = w; x.beginPath();
+    for (let px=0; px<=512; px+=16){ const yy = y + Math.sin(px/90 + i)*3 + Math.sin(px/23+i*1.7)*1.2; px?x.lineTo(px,yy):x.moveTo(px,yy); }
+    x.stroke(); }
+  const t = new THREE.CanvasTexture(c); t.wrapS = t.wrapT = THREE.RepeatWrapping; t.repeat.set(0.06,0.06); return t;
+}
+const birch  = new THREE.MeshStandardMaterial({map:woodTex('#e3c99a','rgba(150,105,55,A)',11), roughness:0.75});
+const birchL = new THREE.MeshStandardMaterial({map:woodTex('#ead6ae','rgba(160,118,70,A)',29), roughness:0.75});
+const walnut = new THREE.MeshStandardMaterial({map:woodTex('#6b4a2e','rgba(30,18,8,A)',7), roughness:0.7});
+const baseGroup = new THREE.Group(); scene.add(baseGroup);
+const PLINTH = 1.5;   // real metres → 15 mm board at 1:100
+function slabFromPolys(polys, top, depth, mat){
+  for (const p of polys){
+    const sh = new THREE.Shape(p.map(([x,y])=>new THREE.Vector2(x,y)));
+    const g = new THREE.ExtrudeGeometry(sh, {depth, bevelEnabled:false});
+    g.rotateX(-Math.PI/2); g.translate(0, top-depth, 0);
+    const m = new THREE.Mesh(g, mat); baseGroup.add(m);
+    m.add(new THREE.LineSegments(new THREE.EdgesGeometry(g, 30), new THREE.LineBasicMaterial({color:0x3a2a18, transparent:true, opacity:0.35})));
+  }
+}
+const baseMat = new THREE.MeshStandardMaterial({color:0xd8d3c6, roughness:0.9});
+slabFromPolys(BASE.plot, 0.0, PLINTH, baseMat);        // the real plot (445 m²), plain colour, top at ground-floor level
+const boardBox = new THREE.Box3().setFromObject(baseGroup);
+
+// ---------- lift shaft ghost, shown with the core highlight ----------
+const liftShaft = new THREE.Mesh(new THREE.BoxGeometry(2.16, 1, 2.04),
+  new THREE.MeshStandardMaterial({color:0x2f78d6, transparent:true, opacity:0.35, depthWrite:false, clippingPlanes:[clip]}));
+liftShaft.position.set(-1.86, 8, 1.2); liftShaft.visible = false; scene.add(liftShaft);
+
+// ---------- state ----------
+const S = {floor:5, core:false, rings:true, int:true, gw:0, ex:0, scale:100, printer:'fdm', lh:0.2, mode:'arch', pp:100, clay:'terracotta', cl:1.0, sh:11, dims:false, base:true};
+
+function levelOf(m){
+  const u = m.userData;
+  if (u.coll in LEVEL) return LEVEL[u.coll];
+  if (u.coll === '08_Balconies') return +u.name.match(/F(\d)/)[1];
+  if (u.coll === '10_Lintel_rings') return u.name.startsWith('GF') ? 0 : +u.name.match(/F(\d)/)[1];
+  return null;
+}
+function layout(){
+  for (const m of meshes){
+    const u = m.userData; let y = 0, z = 0;
+    const lv = levelOf(m);
+    if (lv !== null) y = lv * S.ex + (u.coll === '10_Lintel_rings' ? S.ex*0.5 : 0);   // rings float in their own gap
+    if (u.coll === '07_Greenwall' || u.glass) z = S.gw;     // only ever moves south, away from the facade
+    const interior = u.mat === 'Interior_Walls' || u.mat === 'Stair_Block';
+    m.visible = !(u.coll === '06_Louvres' && S.ex >= 0.05) && !(u.glass && S.mode === 'clay') && !(interior && !S.int)
+      && !(lv !== null && lv > S.floor) && !(u.coll === '10_Lintel_rings' && !S.rings);
+    m.position.set(0, y, z);
+  }
+  clipTop.constant = FLOOR_TOP[S.floor];
+  liftShaft.visible = S.core && S.ex < 0.05;
+  liftShaft.scale.y = Math.min(FLOOR_TOP[S.floor], 16.1); liftShaft.position.y = liftShaft.scale.y/2;
+  floorText(); updateClip(); dimText();
+}
+function bldBox(){ const b = new THREE.Box3(); for (const m of meshes){ if (!m.visible) continue; const bb = m.geometry.boundingBox.clone().translate(m.position); b.union(bb);} return b; }
+function updateClip(){
+  const H = bldBox().max.y, h = H * S.pp/100;
+  clip.constant = S.pp >= 100 ? 1000 : h;
+  const mm = h*1000/S.scale, totalmm = H*1000/S.scale;
+  const lh = S.mode==='clay' ? S.cl : S.lh;
+  document.getElementById('ppv').textContent = `${mm.toFixed(1)} / ${totalmm.toFixed(1)} mm`;
+  const layer = Math.floor(mm/lh), total = Math.ceil(totalmm/lh);
+  document.getElementById('ppNote').textContent = S.ex>0.05
+    ? `Floors lifted apart, so this shows each part as its own print. ${total} layers in total at ${lh.toFixed(2)} mm.`
+    : `Layer ${layer} of ${total} at ${lh.toFixed(2)} mm, printed as one stacked piece. Stop the slider mid-floor to see that floor's plan from above.`;
+}
+
+function applyMode(){
+  U.uMode.value = {arch:0, parts:0, bands:1, clay:2}[S.mode];
+  U.uLayer.value = S.cl * S.scale / 1000;     // clay layer, expressed in real metres
+  U.uClay.value.setHex(CLAY[S.clay].c);
+  for (const m of meshes){
+    const u = m.userData, mat = m.material;
+    if (S.mode === 'parts') mat.color.setHex(u.glass ? ARCH.Glass : PARTCOL[u.part]);
+    else mat.color.setHex(ARCH[u.mat]||0xdddddd);
+    mat.roughness = S.mode==='clay' ? 1 : (u.glass?0.1:0.85);
+    u.edges.material.opacity = S.mode==='clay' ? 0.12 : (u.glass?0.25:0.55);
+  }
+  applyShell();
+  document.getElementById('clayPanel').hidden = S.mode !== 'clay';
+  const note = document.getElementById('modeNote'), sw = document.getElementById('swaps'), lg = document.getElementById('legend');
+  let items = []; sw.hidden = true;
+  if (S.mode === 'arch'){
+    note.textContent = 'Finishes from the drawings: exposed concrete, wood cladding (B-s1,d0) on the penthouse and roof, planted screen, glass balustrades.';
+    items = [['Exposed concrete',ARCH.Concrete_White],['Interior walls',ARCH.Interior_Walls],['Stair block',ARCH.Stair_Block],['Floor slabs',ARCH.Slab],['Green wall',ARCH.Greenwall],['Wood cladding',ARCH.Wood_Cladding],['Glass',ARCH.Glass]];
+  } else if (S.mode === 'parts'){
+    note.textContent = 'Each colour is a separate print in its own filament. Floors stack on each other, the screen slots in front.';
+    items = Object.entries(PARTCOL);
+  } else if (S.mode === 'bands'){
+    note.textContent = 'One tall print on a single-nozzle printer. Pause at each slab underside and swap filament, so every storey comes out a different colour.';
+    items = ['Ground','Floor 1','Floor 2','Floor 3','Floor 4','Roof'].map((n,i)=>[n,BANDCOL[i]]);
+    sw.hidden = false;
+    sw.innerHTML = BANDS.slice(1).map((z,i)=>{
+      const mm = z*1000/S.scale; const L = Math.round(mm/S.lh);
+      return `<div><span class="sw" style="background:${hex(BANDCOL[i+1])}"></span>Pause at ${mm.toFixed(1)} mm · layer ${L} → ${['Floor 1','Floor 2','Floor 3','Floor 4','Roof'][i]}</div>`;
+    }).join('');
+  } else {
+    note.textContent = 'Bisque-fired, no glaze: one clay body throughout, matte surface, visible extrusion ridges. Glass is left out, as it would be in clay.';
+    items = [[CLAY[S.clay].n + ' (fired, unglazed)', CLAY[S.clay].c]];
+  }
+  if (S.core) items.unshift(['Staircase', 0xe37830], ['Lift', 0x2f78d6]);
+  if (S.base) items.push(['Plot, 445 m²', 0xd8d3c6]);
+  lg.innerHTML = items.map(([n,c])=>`<div><span class="sw" style="background:${hex(c)}"></span>${n}</div>`).join('');
+  clayText(); updateClip();
+}
+function clayText(){
+  document.getElementById('clv').textContent = `${S.cl.toFixed(2)} mm`;
+  document.getElementById('shv').textContent = `${S.sh.toFixed(1)} %`;
+  const printScale = S.scale * (1 - S.sh/100);
+  const b = bldBox(), s = new THREE.Vector3(); b.getSize(s);
+  const k = 1/(S.scale*0.01) ;                  // metres → cm at target scale
+  document.getElementById('shNote').textContent =
+    `To end up at 1:${S.scale} after firing, print at 1:${printScale.toFixed(1)}. Green height ${(s.y*100/printScale).toFixed(1)} cm, fired ${(s.y*100/S.scale).toFixed(1)} cm.`;
+}
+
+// wall thicknesses, real → model mm at every scale
+const FEATURES = [
+  ['External wall', 250, 'concrete, 250–300 on the drawings'],
+  ['Lift & stair core', 250, 'concrete'],
+  ['Interior partition', 90, 'measured ≈ 90 on the plans'],
+  ['Green wall screen', 350, ''],
+  ['Parapets', 200, 'terrace and roof'],
+  ['Floor slab', 500, 'incl. finishes'],
+  ['Balcony slab', 250, ''],
+  ['Lintel ring', 100, 'height, now its own part'],
+  ['Narrowest column', 250, ''],
+  ['Glass balustrade', 40, 'not printed']];
+const SCALES = [80, 100, 150, 200];
+function featTable(){
+  const lim = {fdm:{ok:1.2, warn:0.8}, resin:{ok:0.6, warn:0.35}, clay:{ok:2.4, warn:1.2}}[S.printer];
+  const cls = t => t>=lim.ok?'ok':t>=lim.warn?'warn':'bad';
+  document.querySelector('#feat thead').innerHTML = '<tr><th>Element</th><th class="n">Real</th>' +
+    SCALES.map(s=>`<th class="n${s===S.scale?' cur':''}">1:${s}</th>`).join('') + '</tr>';
+  document.querySelector('#feat tbody').innerHTML = FEATURES.map(([n,mm,note])=>
+    `<tr><td>${n}${note?`<small>${note}</small>`:''}</td><td class="n">${mm}</td>` +
+    SCALES.map(s=>{ const v = mm/s; return `<td class="n ${cls(v)}${s===S.scale?' cur':''}">${v.toFixed(2)}</td>`; }).join('') + '</tr>').join('');
+  const pn = {fdm:'FDM 0.4 mm nozzle', resin:'resin', clay:'clay 1.2 mm nozzle'}[S.printer];
+  document.getElementById('featKey').textContent = `All values in mm. For ${pn}: green prints well (≥ ${lim.ok} mm), amber is fragile (≥ ${lim.warn} mm), red is too thin.`;
+}
+function partsTable(){
+  // stacked parts are measured as one assembly; loose pieces (rings, balconies, glass) by their largest single piece
+  const LOOSE = new Set(['Lintel rings','Balconies','Glass balustrades']);
+  const box = {}, count = {};
+  for (const m of meshes){ const p = m.userData.glass ? 'Glass balustrades' : m.userData.part;
+    count[p] = (count[p]||0) + 1;
+    if (LOOSE.has(p)){ const s = new THREE.Vector3(), o = new THREE.Vector3(); m.geometry.boundingBox.getSize(s);
+      if (box[p]) box[p].getSize(o); if (!box[p] || s.x*s.z > o.x*o.z) box[p] = m.geometry.boundingBox.clone(); }
+    else (box[p] ||= new THREE.Box3()).union(m.geometry.boundingBox); }
+  const order = ['Ground floor','Floor 1','Floor 2','Floor 3','Floor 4 penthouse','Roof','Green wall','Lintel rings','Balconies','AC louvres','Glass balustrades'];
+  document.querySelector('#parts tbody').innerHTML = order.filter(p=>box[p]).map(p=>{
+    const s = new THREE.Vector3(); box[p].getSize(s); const k = 1000/S.scale;
+    let w=s.x*k, d=s.z*k, h=s.y*k;
+    if (p==='Green wall'){ [d,h] = [h,d]; }
+    return `<tr><td>${p}${p==='Green wall'?' <span class="note">(flat)</span>':''}${LOOSE.has(p)?` <span class="note">×${count[p]}, largest</span>`:''}</td><td class="n">${w.toFixed(0)} × ${d.toFixed(0)} × ${h.toFixed(1)}</td><td class="n">${Math.ceil(h/S.lh)}</td></tr>`;
+  }).join('');
+}
+
+// ---------- dimensions in real-life centimetres ----------
+const cm = m => (m*100/S.scale).toFixed(1) + ' cm';
+const dimLines = new THREE.Group(); scene.add(dimLines);
+const dimEls = document.getElementById('dims');
+let DIMS = [];
+function seg3(a,b,col){ const g = new THREE.BufferGeometry().setFromPoints([a,b]); dimLines.add(new THREE.Line(g, new THREE.LineBasicMaterial({color:col, depthTest:false}))); }
+function dimLine(a, b, off, text, cls, col){
+  const A = a.clone().add(off), B = b.clone().add(off);
+  seg3(a, A, col); seg3(b, B, col); seg3(A, B, col);
+  const tick = off.clone().normalize().multiplyScalar(0.35);
+  seg3(A.clone().sub(tick), A.clone().add(tick), col); seg3(B.clone().sub(tick), B.clone().add(tick), col);
+  DIMS.push({p:A.clone().add(B).multiplyScalar(0.5), text, cls});
+}
+function buildDims(){
+  dimLines.clear(); DIMS = []; dimEls.innerHTML = '';
+  if (!S.dims) return;
+  const b = bldBox(), y0 = 0.05, blue = 0x2f5f9e, brown = 0x7a5a36;
+  dimLine(new THREE.Vector3(b.min.x,y0,b.max.z), new THREE.Vector3(b.max.x,y0,b.max.z), new THREE.Vector3(0,0,2.2), cm(b.max.x-b.min.x), '', blue);
+  dimLine(new THREE.Vector3(b.max.x,y0,b.min.z), new THREE.Vector3(b.max.x,y0,b.max.z), new THREE.Vector3(2.2,0,0), cm(b.max.z-b.min.z), '', blue);
+  dimLine(new THREE.Vector3(b.max.x,0,b.max.z), new THREE.Vector3(b.max.x,b.max.y,b.max.z), new THREE.Vector3(2.2,0,2.2), cm(b.max.y), '', blue);
+  if (S.base){
+    const B = boardBox, yb = B.min.y;
+    dimLine(new THREE.Vector3(B.min.x,yb,B.max.z), new THREE.Vector3(B.max.x,yb,B.max.z), new THREE.Vector3(0,0,3), 'base ' + cm(B.max.x-B.min.x), 'base', brown);
+    dimLine(new THREE.Vector3(B.max.x,yb,B.min.z), new THREE.Vector3(B.max.x,yb,B.max.z), new THREE.Vector3(3,0,0), 'base ' + cm(B.max.z-B.min.z), 'base', brown);
+  }
+  DIMS.forEach(d=>{ const e = document.createElement('div'); e.className = 'dim ' + d.cls; e.textContent = d.text; dimEls.appendChild(e); d.el = e; });
+}
+function placeDims(){
+  if (!DIMS.length) return;
+  const r = canvas.getBoundingClientRect();
+  for (const d of DIMS){ const v = d.p.clone().project(camera);
+    d.el.style.left = ((v.x+1)/2*r.width) + 'px'; d.el.style.top = ((1-v.y)/2*r.height) + 'px'; d.el.hidden = v.z > 1; }
+}
+function dimText(){
+  const b = bldBox(), s = new THREE.Vector3(); b.getSize(s);
+  document.getElementById('dimBig').textContent = `${cm(s.x)} wide × ${cm(s.z)} deep × ${cm(s.y)} tall`;
+  let sub = `Building at 1:${S.scale}, including the green wall.`;
+  if (S.base){ const bs = new THREE.Vector3(); boardBox.getSize(bs);
+    sub += ` Base cut to the plot outline, ${cm(bs.x)} × ${cm(bs.z)}, ${(PLINTH*1000/S.scale).toFixed(0)} mm thick. Total height on the base ${cm(s.y + PLINTH)}.`; }
+  document.getElementById('dimSub').textContent = sub;
+  document.getElementById('scalebar').textContent = `1:${S.scale} · ${cm(s.x)} × ${cm(s.z)} × ${cm(s.y)}`;
+  buildDims();
+}
+
+function floorText(){
+  const names = ['Ground floor','Floor 1','Floor 2','Floor 3','Floor 4 penthouse','Roof'];
+  const el = document.getElementById('floorNote');
+  if (S.floor >= 5){ el.textContent = 'Showing the whole building. Pick a floor to see the model as printed up to that storey.'; return; }
+  const b = new THREE.Box3();
+  for (const m of meshes) if (levelOf(m) === S.floor && !m.userData.glass) b.union(m.geometry.boundingBox);
+  const s = new THREE.Vector3(); b.getSize(s); const k = 1000/S.scale;
+  el.textContent = `${names[S.floor]} on top, everything above hidden. This piece: ${(s.x*k).toFixed(0)} × ${(s.z*k).toFixed(0)} × ${(s.y*k).toFixed(1)} mm, ${Math.ceil(s.y*k/S.lh)} layers at ${S.lh.toFixed(2)} mm.`;
+}
+function refreshText(){
+  document.getElementById('gwv').textContent = S.gw < 0.01 ? 'built position' : `+${S.gw.toFixed(2)} m · +${(S.gw*1000/S.scale).toFixed(1)} mm`;
+  document.getElementById('exv').textContent = `${S.ex.toFixed(2)} m · ${(S.ex*1000/S.scale).toFixed(1)} mm`;
+  document.getElementById('lhv').textContent = `${S.lh.toFixed(2)} mm`;
+}
+function all(){ refreshText(); layout(); applyMode(); featTable(); partsTable(); dimText(); }
+
+// ---------- controls ----------
+const bindRange = (id,key,cb)=>document.getElementById(id).addEventListener('input',e=>{S[key]=+e.target.value; refreshText(); cb();});
+bindRange('gw','gw',layout); bindRange('ex','ex',layout); bindRange('pp','pp',updateClip);
+bindRange('lh','lh',()=>{applyMode(); partsTable();});
+bindRange('cl','cl',applyMode); bindRange('sh','sh',clayText);
+function seg(id, attr, key, cb){
+  const el = document.getElementById(id);
+  el.addEventListener('click', e=>{ const b = e.target.closest('button'); if(!b) return;
+    el.querySelectorAll('button').forEach(x=>x.setAttribute('aria-pressed', x===b));
+    S[key] = isNaN(+b.dataset[attr]) ? b.dataset[attr] : +b.dataset[attr]; cb(); });
+}
+seg('scaleSeg','s','scale', all); seg('printerSeg','p','printer', featTable);
+seg('modeSeg','m','mode', ()=>{ layout(); applyMode(); });
+seg('claySeg','c','clay', applyMode);
+function toggle(id,key,cb){ const b = document.getElementById(id); b.addEventListener('click',()=>{ S[key]=!S[key]; b.setAttribute('aria-pressed', S[key]); cb(); }); }
+toggle('dimBtn','dims', dimText);
+toggle('intBtn','int', layout);
+toggle('coreBtn','core', ()=>{ U.uCore.value = S.core ? 1 : 0; layout(); applyMode(); });
+toggle('ringBtn','rings', layout);
+seg('floorSeg','f','floor', layout);
+toggle('baseBtn','base', ()=>{ baseGroup.visible = S.base; applyMode(); dimText(); });
+
+// ---------- see-through shell and vertical section ----------
+var SHELL_MATS = new Set(['Concrete_White','Wood_Cladding']);
+var shellOn = false;
+function applyShell(){
+  if (!SHELL_MATS) return;
+  for (const m of meshes){
+    const u = m.userData, mat = m.material;
+    if (u.glass) continue;
+    const isShell = SHELL_MATS.has(u.mat), isGreen = u.coll === '07_Greenwall';
+    let op = 1;
+    if (shellOn && isShell) op = 0.16;
+    if (shellOn && isGreen) op = 0.45;
+    const tr = op < 1;
+    if (mat.transparent !== tr){ mat.transparent = tr; mat.needsUpdate = true; }
+    mat.opacity = op; mat.depthWrite = !tr;
+    if (tr) u.edges.material.opacity = isGreen ? 0.4 : 0.22;
+  }
+}
+document.getElementById('shellBtn').addEventListener('click', e=>{
+  shellOn = !shellOn; e.currentTarget.setAttribute('aria-pressed', String(shellOn)); applyMode();
+});
+const BB = new THREE.Box3(); meshes.forEach(m=>BB.expandByObject(m));
+let secAxis = 's';
+function applySection(){
+  const t = +document.getElementById('sec').value / 100;
+  const N = {s:[0,0,-1], n:[0,0,1], e:[-1,0,0], w:[1,0,0]}[secAxis];
+  secPlane.normal.set(...N);
+  // keep n·p + c >= 0 ; slide the plane from the chosen face across the building
+  let c;
+  if (secAxis === 's') c = BB.max.z - t*(BB.max.z - BB.min.z);
+  else if (secAxis === 'n') c = -(BB.min.z + t*(BB.max.z - BB.min.z));
+  else if (secAxis === 'e') c = BB.max.x - t*(BB.max.x - BB.min.x);
+  else c = -(BB.min.x + t*(BB.max.x - BB.min.x));
+  secPlane.constant = t <= 0 ? 1000 : c;
+  const metres = t * (secAxis==='s'||secAxis==='n' ? BB.max.z-BB.min.z : BB.max.x-BB.min.x);
+  document.getElementById('secv').textContent = t <= 0 ? 'off' : `${metres.toFixed(2)} m in · ${(metres*1000/S.scale).toFixed(0)} mm on model`;
+}
+document.getElementById('sec').addEventListener('input', applySection);
+document.getElementById('secSeg').addEventListener('click', e=>{
+  const b = e.target.closest('button[data-a]'); if (!b) return;
+  secAxis = b.dataset.a;
+  document.querySelectorAll('#secSeg button').forEach(x=>x.setAttribute('aria-pressed', String(x===b)));
+  applySection();
+});
+applySection();
+
+const VIEWS = {se:[30,22,34], ne:[30,22,-34], nw:[-30,22,-34], sw:[-30,22,34], top:[0.01,58,0.01], s:[0,9,50]};
+const PLOT_C = (()=>{ const xs = BASE.plot[0].map(q=>q[0]), ys = BASE.plot[0].map(q=>q[1]);
+  return {x:(Math.min(...xs)+Math.max(...xs))/2, z:-(Math.min(...ys)+Math.max(...ys))/2}; })();
+function go(v){ const p = VIEWS[v]; camera.position.set(p[0]+PLOT_C.x, p[1], p[2]+PLOT_C.z); controls.target.set(PLOT_C.x, v==='top'?0:7.5, PLOT_C.z); controls.update(); }
+controls.maxDistance = 140; controls.minDistance = 4;
+document.getElementById('resetM').addEventListener('click', ()=>go('se'));
+canvas.addEventListener('dblclick', ()=>go('se'));
+document.querySelector('.views').addEventListener('click', e=>{ const b=e.target.closest('button[data-v]'); if(b) go(b.dataset.v); });
+
+function resize(){ const r = canvas.parentElement.getBoundingClientRect(); renderer.setSize(r.width, r.height, false); camera.aspect = r.width/r.height; camera.updateProjectionMatrix(); }
+new ResizeObserver(resize).observe(canvas.parentElement);
+resize(); go('se'); all();
+(function loop(){ if (canvas.offsetParent){ controls.update(); renderer.render(scene, camera); placeDims(); } requestAnimationFrame(loop); })();
+
+</script>
+<script>
+(() => {
+const DATA = DATA_TP;
+const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+const BEAD = DATA.bead, LAY = DATA.layer;
+
+/* ---------- build the move list for each part ---------- */
+function partTransform(P, stacked){
+  if (P.flat){
+    if (stacked) return (x,y,z) => [x, -74.5 + z, y];          // stand the green wall up in place
+    return (x,y,z) => [x, y - 71, z];
+  }
+  return (x,y,z) => [x, y, z + P.z0];
+}
+function buildPart(P, stacked){
+  const tf = partTransform(P, stacked);
+  const segs = [];          // {a:[x,y,z], b, print, layer, stroke}
+  let last = null;
+  P.layers.forEach((L, li) => {
+    let strokes = DATA_GEOM(P, L.g);
+    if (L.rev) strokes = strokes.slice().reverse().map(s => reversePts(s));
+    strokes.forEach((s, si) => {
+      const pts = [];
+      for (let i = 0; i < s.length; i += 2) pts.push([s[i], s[i+1], L.z]);
+      if (last) segs.push({a:last, b:pts[0], print:false, layer:li, stroke:si});
+      for (let i = 1; i < pts.length; i++) segs.push({a:pts[i-1], b:pts[i], print:true, layer:li, stroke:si});
+      last = pts[pts.length-1];
+    });
+  });
+  segs.forEach(s => { s.wa = tf(...s.a); s.wb = tf(...s.b); s.len = Math.hypot(s.b[0]-s.a[0], s.b[1]-s.a[1], s.b[2]-s.a[2]); });
+  return segs;
+}
+function DATA_GEOM(P, g){ return P.geoms[g].s; }
+function reversePts(s){ const o=[]; for (let i=s.length-2;i>=0;i-=2) o.push(s[i], s[i+1]); return o; }
+
+/* ---------- three.js scene ---------- */
+const canvas = document.getElementById('tpView');
+const renderer = new THREE.WebGLRenderer({canvas, antialias:true, alpha:true});
+renderer.setPixelRatio(Math.min(2, devicePixelRatio));
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(35, 1, 1, 5000);
+camera.up.set(0,0,1);
+const controls = new THREE.OrbitControls(camera, canvas);
+controls.enableDamping = true;
+scene.add(new THREE.HemisphereLight(0xffffff, 0x8a8178, 0.75));
+const sun = new THREE.DirectionalLight(0xffffff, 0.75); sun.position.set(-150, -220, 320); scene.add(sun);
+const fill = new THREE.DirectionalLight(0xffffff, 0.25); fill.position.set(200, 150, 120); scene.add(fill);
+
+let root = new THREE.Group(); scene.add(root);
+let state = { part: 'f1', mode: 'clay', showPath: true, showTravel: true, t: 1, playing: false };
+let cur = null;   // built data for the current selection
+
+const nozzle = new THREE.Mesh(new THREE.SphereGeometry(1.6, 20, 14), new THREE.MeshBasicMaterial({color: 0xd4271b}));
+const nozzleStem = new THREE.Mesh(new THREE.CylinderGeometry(0.5, 0.5, 30, 10), new THREE.MeshBasicMaterial({color: 0xd4271b, transparent:true, opacity:.35}));
+nozzleStem.rotation.x = Math.PI/2;
+scene.add(nozzle, nozzleStem);
+
+function origMesh(name, P, stacked){
+  const o = DATA.orig[name]; if (!o) return null;
+  const g = new THREE.BufferGeometry();
+  const v = o.v.slice();
+  if (P.flat && !stacked){ // green wall drawn flat in its own view
+    for (let i=0;i<v.length;i+=3){ const y=v[i+1], z=v[i+2]; v[i+1]=z-71; v[i+2]=-71-y; }
+  }
+  g.setAttribute('position', new THREE.Float32BufferAttribute(v, 3));
+  g.setIndex(o.f);
+  const ng = g.toNonIndexed(); ng.computeVertexNormals();
+  return ng;
+}
+
+function build(){
+  root.clear();
+  const stacked = state.part === 'all';
+  const parts = stacked ? DATA.parts : DATA.parts.filter(p => p.id === state.part);
+  let segs = [];
+  const layerStarts = [];
+  parts.forEach(P => {
+    const s = buildPart(P, stacked);
+    if (segs.length && s.length){ const l = segs[segs.length-1]; segs.push({a:l.b, b:s[0].a, wa:l.wb, wb:s[0].wa, print:false, len:0, layer:-1, stroke:-1, part:P}); }
+    const base = layerStarts.length;
+    s.forEach(x => { x.part = P; x.gl = base + x.layer; });
+    P.layers.forEach((L,i)=>layerStarts.push({P, i, L}));
+    segs = segs.concat(s);
+  });
+  // cumulative length
+  let acc = 0; const cum = new Float64Array(segs.length+1);
+  segs.forEach((s,i)=>{ cum[i]=acc; acc += s.len; }); cum[segs.length]=acc;
+  const nL = layerStarts.length;
+  const firstSegOfLayer = new Array(nL).fill(-1);
+  segs.forEach((s,i)=>{ if (s.gl>=0 && firstSegOfLayer[s.gl]<0) firstSegOfLayer[s.gl]=i; });
+
+  // toolpath lines (printed) with colour by layer
+  const clay = new THREE.Color(css('--clay')), slabC = new THREE.Color('#7d5a43'), light = new THREE.Color('#f0c8a8');
+  const pos = [], col = [], tpos = [], printIdx = [], travIdx = [];
+  segs.forEach((s,i)=>{
+    if (s.print){
+      pos.push(...s.wa, ...s.wb);
+      const L = s.gl>=0 ? layerStarts[s.gl].L : null;
+      const c = (L && L.kind==='slab') ? slabC.clone() : clay.clone().lerp(light, (s.gl % 30)/60);
+      col.push(c.r,c.g,c.b,c.r,c.g,c.b);
+      printIdx.push(i);
+    } else if (s.len > 0.01){
+      tpos.push(...s.wa, ...s.wb); travIdx.push(i);
+    }
+  });
+  const lg = new THREE.BufferGeometry();
+  lg.setAttribute('position', new THREE.Float32BufferAttribute(pos,3));
+  lg.setAttribute('color', new THREE.Float32BufferAttribute(col,3));
+  const colourMat = new THREE.LineBasicMaterial({vertexColors:true});
+  const whiteMat = new THREE.LineBasicMaterial({color:0xffffff});
+  const lines = new THREE.LineSegments(lg, colourMat);
+  const ghost = new THREE.LineSegments(lg, new THREE.LineBasicMaterial({color: css('--muted'), transparent:true, opacity:.10}));
+  const tg = new THREE.BufferGeometry(); tg.setAttribute('position', new THREE.Float32BufferAttribute(tpos,3));
+  const trav = new THREE.LineSegments(tg, new THREE.LineDashedMaterial({color: css('--travel'), dashSize:1.2, gapSize:1.2}));
+  trav.computeLineDistances();
+
+  // clay beads: one box per printed segment, in print order
+  const box = new THREE.BoxGeometry(1,1,1);
+  const beadMat = new THREE.MeshStandardMaterial({color: css('--clay'), roughness:.92, metalness:0});
+  const beads = new THREE.InstancedMesh(box, beadMat, printIdx.length);
+  const m = new THREE.Matrix4(), d = new THREE.Vector3(), u = new THREE.Vector3(), sd = new THREE.Vector3(), c = new THREE.Vector3();
+  const beadMatrix = (s, frac) => {
+    const a = new THREE.Vector3(...s.wa), b = new THREE.Vector3(...s.wb);
+    b.lerp(a, 1-frac);
+    d.subVectors(b,a); let len = d.length(); if (len < 1e-6) len = 1e-6; d.normalize();
+    // layer normal in world: transform (0,0,1)
+    const P = s.part, tf = partTransform(P, stacked);
+    const o0 = tf(0,0,0), o1 = tf(0,0,1); u.set(o1[0]-o0[0], o1[1]-o0[1], o1[2]-o0[2]).normalize();
+    sd.crossVectors(u, d).normalize();
+    c.addVectors(a,b).multiplyScalar(.5).addScaledVector(u, -LAY/2);
+    m.makeBasis(d.clone().multiplyScalar(len + BEAD*0.5), sd.clone().multiplyScalar(BEAD), u.clone().multiplyScalar(LAY*1.02));
+    m.setPosition(c);
+    return m;
+  };
+  printIdx.forEach((si,k)=> beads.setMatrixAt(k, beadMatrix(segs[si], 1)));
+  beads.instanceMatrix.needsUpdate = true;
+
+  // current model meshes
+  const now = new THREE.Group();
+  const matNow = new THREE.MeshStandardMaterial({color:'#e9e6df', roughness:.85});
+  const matInt = new THREE.MeshStandardMaterial({color:'#c9b8a3', roughness:.85});
+  const matRing = new THREE.MeshStandardMaterial({color:'#5f8fc9', roughness:.7});
+  parts.forEach(P => P.orig.forEach(n => {
+    const g = origMesh(n, P, stacked); if (!g) return;
+    const mat = /lintel/i.test(n) ? matRing : /interior/i.test(n) ? matInt : matNow;
+    now.add(new THREE.Mesh(g, mat));
+  }));
+  const nowGhost = new THREE.Group();
+  now.children.forEach(ch => nowGhost.add(new THREE.Mesh(ch.geometry, new THREE.MeshBasicMaterial({color:'#2f5f9e', wireframe:true, transparent:true, opacity:.35}))));
+
+  root.add(ghost, lines, trav, beads, now, nowGhost);
+  const strokeStarts = []; segs.forEach((x,i)=>{ if (x.print && (i===0 || !segs[i-1].print)) strokeStarts.push(i); });
+  cur = {colourMat, whiteMat, strokeStarts, segs, cum, total: acc, lines, ghost, trav, beads, now, nowGhost, printIdx, travIdx, beadMatrix, layerStarts, firstSegOfLayer, parts};
+
+  // layer slider range
+  const lay = document.getElementById('lay');
+  lay.max = nL;
+  frameCamera(document.querySelector('[data-cam][aria-pressed="true"]')?.dataset.cam || 'iso');
+  updateStats();
+  applyMode();
+  setT(state.t);
+}
+
+function applyMode(){
+  if (!cur) return;
+  const m = state.mode;
+  const pathOnly = m === 'both';
+  cur.beads.visible = (m === 'clay');
+  cur.now.visible = (m === 'now');
+  cur.nowGhost.visible = false;
+  cur.lines.visible = (state.showPath || pathOnly) && m !== 'now';
+  cur.lines.material = pathOnly ? cur.whiteMat : cur.colourMat;
+  cur.ghost.visible = (state.showPath || pathOnly) && m !== 'now';
+  cur.ghost.material.opacity = pathOnly ? .07 : .10;
+  cur.ghost.material.color.set(pathOnly ? '#ffffff' : css('--muted'));
+  cur.trav.visible = state.showTravel && m !== 'now';
+  canvas.parentElement.classList.toggle('night', pathOnly);
+  nozzle.visible = nozzleStem.visible = m !== 'now';
+  ['cmpClay','cmpNow','cmpBoth'].forEach((id,i)=>document.getElementById(id).setAttribute('aria-pressed', String(['clay','now','both'][i]===m)));
+}
+
+function segAt(t){
+  const L = t * cur.total, cum = cur.cum;
+  let lo = 0, hi = cur.segs.length - 1;
+  while (lo < hi){ const mid = (lo+hi+1)>>1; if (cum[mid] <= L) lo = mid; else hi = mid-1; }
+  const s = cur.segs[lo]; const f = s.len > 0 ? Math.min(1, (L - cum[lo]) / s.len) : 1;
+  return {i: lo, f};
+}
+
+function setT(t){
+  state.t = Math.max(0, Math.min(1, t));
+  if (!cur || !cur.segs.length) return;
+  const {i, f} = segAt(state.t);
+  const s = cur.segs[i];
+  // printed segment counts
+  let nPrint = lowerBound(cur.printIdx, i);          // printed segments strictly before i
+  const partial = s.print && f > 0 && state.t < 1;
+  if (state.t >= 1) nPrint = cur.printIdx.length;
+  cur.lines.geometry.setDrawRange(0, (nPrint + (partial?1:0)) * 2);
+  let nTrav = lowerBound(cur.travIdx, i) + ((!s.print && f >= 1) ? 1 : 0);
+  if (state.t >= 1) nTrav = cur.travIdx.length;
+  cur.trav.geometry.setDrawRange(0, nTrav * 2);
+  cur.beads.count = nPrint + (partial ? 1 : 0);
+  // restore the previous partial instance and set the new one
+  if (cur.lastPartial != null && cur.lastPartial < cur.printIdx.length){ cur.beads.setMatrixAt(cur.lastPartial, cur.beadMatrix(cur.segs[cur.printIdx[cur.lastPartial]], 1)); }
+  cur.lastPartial = null;
+  if (partial){ cur.beads.setMatrixAt(nPrint, cur.beadMatrix(s, f)); cur.lastPartial = nPrint; }
+  cur.beads.instanceMatrix.needsUpdate = true;
+  // nozzle
+  const p = s.wa.map((v,k)=> v + (s.wb[k]-v)*f);
+  const P = s.part, tf = partTransform(P, state.part==='all');
+  const o0 = tf(0,0,0), o1 = tf(0,0,1); const up = [o1[0]-o0[0], o1[1]-o0[1], o1[2]-o0[2]];
+  nozzle.position.set(p[0]+up[0]*1.2, p[1]+up[1]*1.2, p[2]+up[2]*1.2);
+  nozzleStem.position.set(p[0]+up[0]*16, p[1]+up[1]*16, p[2]+up[2]*16);
+  nozzleStem.lookAt(nozzleStem.position.x+up[0], nozzleStem.position.y+up[1], nozzleStem.position.z+up[2]);
+  nozzleStem.rotateX(Math.PI/2);
+  // ui
+  document.getElementById('prog').value = Math.round(state.t*1000);
+  document.getElementById('progv').textContent = (state.t*100).toFixed(1) + ' %';
+  const gl = s.gl >= 0 ? s.gl : 0;
+  const LS = cur.layerStarts[gl];
+  document.getElementById('lay').value = gl + 1;
+  document.getElementById('layv').textContent = `${gl+1} / ${cur.layerStarts.length}`;
+  const strokesInLayer = LS.P.geoms[LS.L.g].s.length;
+  document.getElementById('hud').innerHTML =
+    `<span>${LS.P.name}</span><span>layer <b>${LS.i+1}</b>/${LS.P.layers.length} · ${LS.L.kind==='slab'?'slab':'walls'}</span>` +
+    `<span>z ${LS.L.z.toFixed(1)} mm</span><span>stroke <b>${(s.stroke>=0?s.stroke:0)+1}</b>/${strokesInLayer}</span>` +
+    `<span>${s.print ? 'extruding' : 'nozzle lifted, moving'}</span>`;
+  drawPlan(s, f);
+}
+function lowerBound(arr, v){ let lo=0, hi=arr.length; while(lo<hi){ const m=(lo+hi)>>1; if(arr[m]<v) lo=m+1; else hi=m; } return lo; }
+
+/* ---------- 2D plan of the current layer ---------- */
+const plan = document.getElementById('plan'), pctx = plan.getContext('2d');
+function drawPlan(s, f){
+  const W = plan.width, H = plan.height;
+  pctx.clearRect(0,0,W,H);
+  const gl = s.gl >= 0 ? s.gl : 0; const LS = cur.layerStarts[gl];
+  let strokes = LS.P.geoms[LS.L.g].s; if (LS.L.rev) strokes = strokes.slice().reverse().map(reversePts);
+  let minx=1e9,miny=1e9,maxx=-1e9,maxy=-1e9;
+  LS.P.geoms.forEach(g=>g.s.forEach(st=>{ for(let i=0;i<st.length;i+=2){ minx=Math.min(minx,st[i]); maxx=Math.max(maxx,st[i]); miny=Math.min(miny,st[i+1]); maxy=Math.max(maxy,st[i+1]); } }));
+  const pad = 26, sc = Math.min((W-2*pad)/(maxx-minx), (H-2*pad)/(maxy-miny));
+  const ox = (W - (maxx-minx)*sc)/2, oy = (H - (maxy-miny)*sc)/2;
+  const X = x => ox + (x-minx)*sc, Y = y => H - (oy + (y-miny)*sc);
+  const bead = Math.max(1.5, BEAD*sc);
+  const doneStroke = s.stroke, flat = LS.L.kind === 'slab';
+  pctx.lineCap = 'round'; pctx.lineJoin = 'round';
+  strokes.forEach((st,k)=>{
+    pctx.beginPath(); pctx.moveTo(X(st[0]),Y(st[1])); for(let i=2;i<st.length;i+=2) pctx.lineTo(X(st[i]),Y(st[i+1]));
+    pctx.strokeStyle = css('--clay-soft'); pctx.lineWidth = bead; pctx.stroke();
+  });
+  // printed strokes on this layer
+  const segsHere = []; for (let i = cur.firstSegOfLayer[gl]; i >= 0 && i < cur.segs.length && cur.segs[i].gl === gl; i++) segsHere.push(i);
+  const iNow = segAt(state.t).i;
+  pctx.strokeStyle = css('--clay'); pctx.lineWidth = bead;
+  segsHere.forEach(i => { if (i > iNow && state.t < 1) return; const g = cur.segs[i]; if (!g.print) return;
+    const ff = (i === iNow && state.t < 1) ? f : 1;
+    pctx.beginPath(); pctx.moveTo(X(g.a[0]),Y(g.a[1])); pctx.lineTo(X(g.a[0]+(g.b[0]-g.a[0])*ff), Y(g.a[1]+(g.b[1]-g.a[1])*ff)); pctx.stroke(); });
+  // travel moves
+  pctx.setLineDash([4,4]); pctx.lineWidth = 1.2; pctx.strokeStyle = css('--travel');
+  for (let k=1;k<strokes.length;k++){ const a = strokes[k-1], b = strokes[k];
+    pctx.beginPath(); pctx.moveTo(X(a[a.length-2]),Y(a[a.length-1])); pctx.lineTo(X(b[0]),Y(b[1])); pctx.stroke(); }
+  pctx.setLineDash([]);
+  // stroke numbers (skip on dense slab layers)
+  if (!flat || strokes.length < 40){
+    pctx.font = '500 19px "IBM Plex Mono", monospace'; pctx.textAlign='center'; pctx.textBaseline='middle';
+    strokes.forEach((st,k)=>{ const x=X(st[0]), y=Y(st[1]);
+      pctx.fillStyle = css('--sheet'); pctx.beginPath(); pctx.arc(x,y,13,0,7); pctx.fill();
+      pctx.strokeStyle = css('--ink'); pctx.lineWidth=1; pctx.stroke();
+      pctx.fillStyle = css('--ink'); pctx.fillText(String(k+1), x, y+.5); });
+  }
+  // nozzle
+  const p = [s.a[0]+(s.b[0]-s.a[0])*f, s.a[1]+(s.b[1]-s.a[1])*f];
+  pctx.fillStyle = css('--nozzle'); pctx.beginPath(); pctx.arc(X(p[0]),Y(p[1]),9,0,7); pctx.fill();
+  pctx.strokeStyle = '#fff'; pctx.lineWidth = 2; pctx.stroke();
+  // scale bar 10 mm
+  pctx.fillStyle = css('--muted'); pctx.fillRect(14, H-14, 10*sc, 3);
+  pctx.font = '18px "IBM Plex Mono", monospace'; pctx.textAlign='left'; pctx.fillText('10 mm', 14, H-28);
+}
+
+/* ---------- stats ---------- */
+function updateStats(){
+  let pr=0, tr=0, lifts=0, layers=0, wallStrokes=[];
+  cur.segs.forEach(s=>{ if (s.print) pr += s.len; else if (s.len>0.01){ tr += s.len; lifts++; } });
+  cur.parts.forEach(P=>{ layers += P.layers.length; P.layers.forEach(L=>{ if (L.kind==='wall') wallStrokes.push(P.geoms[L.g].s.length); }); });
+  const fs = +document.getElementById('fs').value;
+  document.getElementById('fsv').textContent = fs + ' mm/s';
+  const time = pr/fs + tr/(fs*2.5);
+  const vol = pr * BEAD * LAY / 1000; // cm3
+  const avg = wallStrokes.length ? (wallStrokes.reduce((a,b)=>a+b,0)/wallStrokes.length) : 0;
+  const crossings = cur.parts.reduce((a,P)=>a+(P.crossings||0),0);
+  const rows = [
+    ['Layers', layers],
+    ['Bead length', (pr/1000).toFixed(1)+' m'],
+    ['Nozzle lifts (whole part)', lifts],
+    ['Strokes per wall layer', wallStrokes.length ? `${Math.min(...wallStrokes)}–${Math.max(...wallStrokes)} (avg ${avg.toFixed(0)})` : '—'],
+    ['Walls crossing twice', crossings ? `${crossings} spot${crossings>1?'s':''}` : 'none'],
+    ['Wet clay, approx.', vol.toFixed(0)+' cm³'],
+    ['Print time, approx.', time>3600 ? `${Math.floor(time/3600)} h ${Math.round(time%3600/60)} min` : `${Math.round(time/60)} min`],
+  ];
+  document.getElementById('stats').innerHTML = rows.map(r=>`<span>${r[0]}</span><span>${r[1]}</span>`).join('');
+  const P = cur.parts[0];
+  const notes = {
+    gf: 'Printed on a 2 mm clay plate that sits on the plot base. Columns become single 2.5 mm beads.',
+    f1: 'Slab 5 mm, then 28 wall layers. Floors 1–3 share almost the same plan.',
+    f2: 'Slab 5 mm, then 28 wall layers.',
+    f3: 'Slab 5 mm, then 28 wall layers.',
+    f4: 'Slab 5 mm, then penthouse walls, terrace parapet and stair shell on top.',
+    roof: 'Roof slab 4.5 mm, then the parapet as one closed loop: no lifts at all.',
+    gw: 'Printed flat on its back, 3.5 mm thick, with the window openings left as holes. Glue it upright later.',
+    all: 'All parts stacked in place. The slider runs through them in print order, ground floor first.'
+  };
+  document.getElementById('partNote').textContent = notes[state.part];
+}
+
+/* ---------- camera ---------- */
+function frameCamera(v){
+  const b = new THREE.Box3();
+  cur.segs.forEach(s=>{ b.expandByPoint(new THREE.Vector3(...s.wa)); b.expandByPoint(new THREE.Vector3(...s.wb)); });
+  const c = b.getCenter(new THREE.Vector3()), sz = b.getSize(new THREE.Vector3()), r = Math.max(sz.x, sz.y, sz.z) * 0.85 + 12;
+  controls.target.copy(c);
+  if (v === 'top') camera.position.set(c.x, c.y - 0.01, c.z + r*1.6);
+  else if (v === 's') camera.position.set(c.x, c.y - r*1.7, c.z + r*0.15);
+  else camera.position.set(c.x - r*0.95, c.y - r*1.25, c.z + r*0.95);
+  document.querySelectorAll('[data-cam]').forEach(bn=>bn.setAttribute('aria-pressed', String(bn.dataset.cam===v)));
+  controls.update();
+}
+
+/* ---------- UI wiring ---------- */
+const partSeg = document.getElementById('partSeg');
+const labels = {gf:'Ground', f1:'Floor 1', f2:'Floor 2', f3:'Floor 3', f4:'Floor 4', roof:'Roof', gw:'Green wall', all:'All stacked'};
+[...DATA.parts.map(p=>p.id), 'all'].forEach(id=>{
+  const b = document.createElement('button'); b.textContent = labels[id]; b.dataset.p = id;
+  b.setAttribute('aria-pressed', String(id===state.part));
+  b.onclick = () => { state.part = id; partSeg.querySelectorAll('button').forEach(x=>x.setAttribute('aria-pressed', String(x===b))); state.t = 1; stop(); build(); };
+  partSeg.appendChild(b);
+});
+document.getElementById('cmpClay').onclick = ()=>{ state.mode='clay'; applyMode(); };
+document.getElementById('cmpNow').onclick = ()=>{ state.mode='now'; applyMode(); };
+document.getElementById('cmpBoth').onclick = ()=>{ state.mode='both'; applyMode(); };
+const tog = (id,key)=>{ const b=document.getElementById(id); b.onclick=()=>{ state[key]=!state[key]; b.setAttribute('aria-pressed',String(state[key])); applyMode(); }; };
+tog('showPath','showPath'); tog('showTravel','showTravel');
+document.querySelectorAll('[data-cam]').forEach(b=> b.onclick = ()=>frameCamera(b.dataset.cam));
+document.getElementById('resetC').onclick = ()=>frameCamera('iso');
+canvas.addEventListener('dblclick', ()=>frameCamera('iso'));
+controls.maxDistance = 1400; controls.minDistance = 20;
+document.getElementById('prog').oninput = e => { stop(); setT(e.target.value/1000); };
+document.getElementById('lay').oninput = e => {
+  stop(); const gl = +e.target.value - 1; const next = cur.firstSegOfLayer[gl+1];
+  const idx = next != null && next >= 0 ? next : cur.segs.length;  // end of that layer
+  setT(cur.cum[idx] / cur.total);
+};
+document.getElementById('fs').oninput = updateStats;
+function strokeJump(dir){
+  stop(); const {i} = segAt(state.t);
+  const starts = cur.strokeStarts;
+  let k = lowerBound(starts, i + (dir > 0 ? 1 : 0));
+  if (dir > 0){ if (k >= starts.length){ setT(1); return; } }
+  else { k = Math.max(0, k - 2); }
+  setT(cur.cum[starts[k]] / cur.total + 1e-9);
+}
+document.getElementById('stepFwd').onclick = ()=>strokeJump(1);
+document.getElementById('stepBack').onclick = ()=>strokeJump(-1);
+const playBtn = document.getElementById('playBtn');
+function stop(){ state.playing=false; playBtn.textContent='Play'; }
+playBtn.onclick = ()=>{ if (state.playing){ stop(); return; } if (state.t >= 1) state.t = 0; state.playing = true; playBtn.textContent = 'Pause'; };
+
+/* ---------- loop ---------- */
+function resize(){ const r = canvas.parentElement.getBoundingClientRect(); renderer.setSize(r.width, r.height, false); camera.aspect = r.width/r.height; camera.updateProjectionMatrix(); }
+new ResizeObserver(resize).observe(canvas.parentElement);
+let lastTs = 0;
+function loop(ts){
+  const dt = Math.min(.1, (ts - lastTs)/1000 || 0); lastTs = ts;
+  if (state.playing && cur){
+    const mmPerSec = +document.getElementById('spd').value * 40;   // animation speed, mm of path per second
+    setT(state.t + dt * mmPerSec / cur.total);
+    if (state.t >= 1) stop();
+  }
+  if (canvas.offsetParent){ controls.update(); renderer.render(scene, camera); }
+  requestAnimationFrame(loop);
+}
+resize(); build();
+// open on a working state: floor 1 part-way through its walls
+setT(0.55);
+requestAnimationFrame(loop);
+matchMedia('(prefers-color-scheme: dark)').addEventListener?.('change', ()=>{ const t=state.t; build(); setT(t); });
+
+})();
+
+(() => {
+  const metas = {Model:'Plot 2869 · Pafos · adp architecture planning set · envelope phase 1',
+                 Clay:'1:100 final size · one bead 2.5 mm · layer 1.0 mm · every part printed slab first, walls on top'};
+  function show(which){
+    ['Model','Clay'].forEach(k=>{
+      document.getElementById('tab'+k).hidden = k!==which;
+      document.getElementById('tabBtn'+k).setAttribute('aria-selected', String(k===which));
+    });
+    document.getElementById('metaLine').textContent = metas[which];
+    try{ history.replaceState(null,'', which==='Clay' ? '#toolpaths' : '#model'); }catch(e){}
+  }
+  document.getElementById('tabBtnModel').onclick = ()=>show('Model');
+  document.getElementById('tabBtnClay').onclick = ()=>show('Clay');
+  if (location.hash === '#toolpaths') show('Clay');
+})();
+
+</script>
+
+</body>
+</html>
